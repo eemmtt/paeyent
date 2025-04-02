@@ -1,0 +1,2 @@
+# Paeyent
+A simple, direct, empirically 'ergonomic', painting app. Limited click/drag type interactions on mobile, and intended for use with an eyetracker on desktop. No layers, no undos, no eyedroppers. Measure thrice, draw once.
