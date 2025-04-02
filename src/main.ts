@@ -3,8 +3,8 @@ import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
 (async () => {
   // Create a new application
   const app = new Application();
-  globalThis.__PIXI_APP__ = app; //for chrome extension
-  await app.init({ background: "#cccccc", resizeTo: window });
+  //globalThis.__PIXI_APP__ = app; //for chrome extension
+  await app.init({ background: "#8d8d8d", resizeTo: window });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
 
   app.stage.eventMode = 'static';
@@ -19,7 +19,7 @@ import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
   const a_height = app.screen.height - (2 * inset);
   const a_width = app.screen.width - (2 * inset);
   artboard.rect(inset, inset, a_width, a_height);
-  artboard.fill(0x009999);
+  artboard.fill(0x888888);
 
   const brush_mask = artboard.clone();
 
@@ -44,7 +44,7 @@ import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
     
     if (isDrawing) {
       const {x , y} = event.global;
-      brush.fill(0xff0000); // Red brush
+      brush.fill(0x110000); // Red brush
       brush.circle(x, y, 5); // 5px circle as "brush"
     }
   };
