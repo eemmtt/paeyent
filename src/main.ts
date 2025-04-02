@@ -1,4 +1,4 @@
-import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
+import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
 
 (async () => {
   // Create a new application
@@ -9,9 +9,9 @@ import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
 
   app.stage.eventMode = 'static';
   app.stage.hitArea = app.screen;
-  app.stage.on('mousedown', mouseDown);
-  app.stage.on('mouseup', mouseUp);
-  app.stage.on('mousemove', mouseMove);
+  app.stage.on('pointerdown', pointerDown);
+  app.stage.on('pointerup', pointerUp);
+  app.stage.on('pointermove', pointerMove);
   app.stage.on('rightdown', rightDown);
 
   const artboard = new Graphics();
@@ -31,16 +31,16 @@ import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
   let isDrawing = false;
 
   //Event Handlers
-  function mouseDown(event: FederatedMouseEvent) {
+  function pointerDown(event: FederatedPointerEvent) {
     console.log(event.button);
     isDrawing = true;
   };
 
-  function mouseUp() {
+  function pointerUp() {
     isDrawing = false;
   };
 
-  function mouseMove(event: FederatedMouseEvent) {
+  function pointerMove(event: FederatedPointerEvent) {
     
     if (isDrawing) {
       const {x , y} = event.global;
@@ -49,7 +49,7 @@ import { Application, FederatedMouseEvent, Graphics } from "pixi.js";
     }
   };
 
-  function rightDown(event: FederatedMouseEvent) {
+  function rightDown(event: FederatedPointerEvent) {
     console.log(event.button);
   }
 
