@@ -1,12 +1,14 @@
 import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
 
 (async () => {
-  // Create a new application
+
+  // Setup
   const app = new Application();
-  //globalThis.__PIXI_APP__ = app; //for chrome extension
+  //globalThis.__PIXI_APP__ = app; //for pixijs scene inspector chrome extension
   await app.init({ background: "#8d8d8d", resizeTo: window });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
 
+  // Configure stage and register Event handlers
   app.stage.eventMode = 'static';
   app.stage.hitArea = app.screen;
   app.stage.on('pointerdown', pointerDown);
@@ -14,6 +16,7 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
   app.stage.on('pointermove', pointerMove);
   app.stage.on('rightdown', rightDown);
 
+  // Setup the drawing surface ('artboard')
   const artboard = new Graphics();
   const inset = 50;
   const a_height = app.screen.height - (2 * inset);
@@ -21,16 +24,19 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
   artboard.rect(inset, inset, a_width, a_height);
   artboard.fill(0x888888);
 
+  // Create an artboard shaped mask for the mark making
   const brush_mask = artboard.clone();
 
+  // Create graphics object for the mark making
   const brush = new Graphics();
   
-  app.stage.addChild(brush_mask, artboard, brush);
+  // Setup scene hierarchy
+  app.stage.addChild(artboard, brush_mask, brush);
   brush.mask = brush_mask;
- 
+  
+  // Event Handlers
   let isDrawing = false;
 
-  //Event Handlers
   function pointerDown(event: FederatedPointerEvent) {
     console.log(event.button);
     isDrawing = true;
@@ -44,8 +50,8 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
     
     if (isDrawing) {
       const {x , y} = event.global;
-      brush.fill(0x110000); // Red brush
-      brush.circle(x, y, 5); // 5px circle as "brush"
+      brush.fill(0x110000);
+      brush.circle(x, y, 5);
     }
   };
 
@@ -56,11 +62,7 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
   /*
   // Listen for animate update
   app.ticker.add((time) => {
-    // Just for fun, let's rotate mr rabbit a little.
-    // * Delta is 1 if running at 100% performance *
-    // * Creates frame-independent transformation *
     //container.rotation += 0.1 * time.deltaTime;
-    
   });
   */
 
