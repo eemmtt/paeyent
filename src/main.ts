@@ -29,11 +29,20 @@ import { Application, FederatedPointerEvent, Graphics, Point } from "pixi.js";
   const layer_history = new Graphics();
   const layer_active = new Graphics();
   
-  const draw_tool = (cnv: Graphics, pts: Array<Point>) => {
-    pts.forEach(pt => {
+  const draw_tool = (active: boolean, cnv: Graphics, pts: Array<Point>) => {
+    if (pts.length == 0){ return }
+    if (active){
+      const pt = pts[pts.length - 1];
       cnv.circle(pt.x, pt.y, 5);
-    });
-    cnv.fill(0x110000);
+      cnv.fill(0x110000);
+    }
+    if (!active){
+      pts.forEach(pt => {
+        cnv.circle(pt.x, pt.y, 5);
+        cnv.fill(0x110000);
+      });
+    }
+    
   }
 
   // Event Handlers
@@ -50,7 +59,7 @@ import { Application, FederatedPointerEvent, Graphics, Point } from "pixi.js";
 
   function pointerUp() {
     if (isDrawing){
-      currTool(layer_history, dPoints);
+      currTool(false, layer_history, dPoints);
       layer_active.clear();
       dPoints = [];
       isDrawing = false;
@@ -60,7 +69,7 @@ import { Application, FederatedPointerEvent, Graphics, Point } from "pixi.js";
   function pointerMove(event: FederatedPointerEvent) {
     if (isDrawing) {
       dPoints.push(new Point(event.globalX, event.globalY));
-      currTool(layer_active, dPoints);
+      currTool(true, layer_active, dPoints);
     }
   };
 
