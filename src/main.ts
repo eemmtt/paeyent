@@ -1,4 +1,4 @@
-import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
+import { Application, FederatedPointerEvent, Graphics, Point } from "pixi.js";
 
 (async () => {
 
@@ -16,42 +16,54 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
   app.stage.on('pointermove', pointerMove);
   app.stage.on('rightdown', rightDown);
 
-  // Setup the drawing surface ('artboard')
-  const artboard = new Graphics();
+  // Setup the drawing layer_base
+  const layer_base = new Graphics();
   const inset = 50;
   const a_height = app.screen.height - (2 * inset);
   const a_width = app.screen.width - (2 * inset);
-  artboard.rect(inset, inset, a_width, a_height);
-  artboard.fill(0x888888);
+  layer_base.rect(inset, inset, a_width, a_height);
+  layer_base.fill(0x888888);
 
-  // Create an artboard shaped mask for the mark making
-  const brush_mask = artboard.clone();
+  // Create an layer_base shaped mask for the mark making
+  const layer_mask = layer_base.clone();
 
   // Create graphics object for the mark making
-  const brush = new Graphics();
+  const layer_history = new Graphics();
+  const layer_active = new Graphics();
   
-  // Setup scene hierarchy
-  app.stage.addChild(artboard, brush_mask, brush);
-  brush.mask = brush_mask;
-  
-  // Event Handlers
-  let isDrawing = false;
+  const draw_tool = (cnv: Graphics, pts: Array<Point>) => {
+    cnv.fill(0x110000);
+    pts.forEach(pt => {
+      cnv.circle(pt.x, pt.y, 5);
+    });
+  }
 
-  function pointerDown(event: FederatedPointerEvent) {
-    console.log(event.button);
-    isDrawing = true;
+  // Event Handlers
+  let isDrawing: boolean = false;
+  let dPoints: Array<Point> = [];
+  let currTool = draw_tool;
+
+  function pointerDown() {
+    if (!isDrawing){
+      //console.log(event.button);
+      isDrawing = true;
+    }
   };
 
   function pointerUp() {
-    isDrawing = false;
+    if (isDrawing){
+      currTool(layer_history, dPoints);
+      layer_active.clear();
+      dPoints = [];
+      isDrawing = false;
+    }
   };
 
   function pointerMove(event: FederatedPointerEvent) {
-    
     if (isDrawing) {
-      const {x , y} = event.global;
-      brush.fill(0x110000);
-      brush.circle(x, y, 5);
+      dPoints.push(new Point(event.globalX, event.globalY));
+      //const currGraphicsContext = layer_active.clear();
+      currTool(layer_active, dPoints);
     }
   };
 
@@ -59,11 +71,17 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
     console.log(event.button);
   }
 
-  /*
-  // Listen for animate update
+  
+  /*/ Listen for animate update
   app.ticker.add((time) => {
     //container.rotation += 0.1 * time.deltaTime;
   });
   */
+  
+
+  // Compose scene graph
+  app.stage.addChild(layer_base, layer_history, layer_active);
+  layer_history.mask = layer_mask;
+  layer_active.mask = layer_mask;
 
 })();
