@@ -34,8 +34,22 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
   app.stage.addChild(artboard, brush_mask, brush);
   brush.mask = brush_mask;
   
+<<<<<<< Updated upstream
   // Event Handlers
   let isDrawing = false;
+=======
+  const draw_tool = (cnv: Graphics, pts: Array<Point>) => {
+    pts.forEach(pt => {
+      cnv.circle(pt.x, pt.y, 5);
+    });
+    cnv.fill(0x110000);
+  }
+
+  // Event Handlers
+  let isDrawing: boolean = false;
+  let dPoints: Array<Point> = [];
+  const currTool = draw_tool;
+>>>>>>> Stashed changes
 
   function pointerDown(event: FederatedPointerEvent) {
     console.log(event.button);
@@ -49,9 +63,14 @@ import { Application, FederatedPointerEvent, Graphics } from "pixi.js";
   function pointerMove(event: FederatedPointerEvent) {
     
     if (isDrawing) {
+<<<<<<< Updated upstream
       const {x , y} = event.global;
       brush.fill(0x110000);
       brush.circle(x, y, 5);
+=======
+      dPoints.push(new Point(event.globalX, event.globalY)); //event.global is a pointer
+      currTool(layer_active, dPoints);
+>>>>>>> Stashed changes
     }
   };
 
