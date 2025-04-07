@@ -1,6 +1,5 @@
 import { Application, Graphics } from "pixi.js";
-import { ToolStore } from "./tool_store";
-import { pointerDown, pointerUp, pointerMove, rightDown } from "./tool_handlers";
+import { ToolStore, toolStart, toolStop, toolMove } from "./tools";
 
 (async () => {
   // Setup
@@ -31,10 +30,9 @@ import { pointerDown, pointerUp, pointerMove, rightDown } from "./tool_handlers"
   const tool_store = new ToolStore(history_layer, active_layer);
 
   // Register Event Handlers
-  app.stage.on('pointerdown', pointerDown, tool_store);
-  app.stage.on('pointerup', pointerUp, tool_store);
-  app.stage.on('pointermove', pointerMove, tool_store);
-  app.stage.on('rightdown', rightDown, tool_store);
+  app.stage.on('pointerdown', toolStart, tool_store);
+  app.stage.on('pointerup', toolStop, tool_store);
+  app.stage.on('pointermove', toolMove, tool_store);
 
   // Compose scene graph
   app.stage.addChild(layer_base, history_layer, active_layer);
