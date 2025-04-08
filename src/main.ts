@@ -1,42 +1,24 @@
-import { Application, Graphics } from "pixi.js";
-import { ToolStore, toolStart, toolStop, toolMove } from "./tools";
+import { Application, Point } from "pixi.js";
+import { ColorPicker } from "./colorpicker";
+import { Surface } from "./surface";
 
 (async () => {
-  // Setup
-  //globalThis.__PIXI_APP__ = app; //for pixijs scene inspector chrome extension
+
+  //for pixijs scene inspector chrome extension:
+  //globalThis.__PIXI_APP__ = app;
+
   const app = new Application();
   await app.init({ background: "#8d8d8d", resizeTo: window });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
 
-  // Setup Containers
   app.stage.eventMode = 'static';
   app.stage.hitArea = app.screen;
   
-  const layer_base = new Graphics();
-  const inset = 50;
-  const a_height = app.screen.height - (2 * inset);
-  const a_width = app.screen.width - (2 * inset);
-  layer_base.rect(inset, inset, a_width, a_height - 2 * inset);
-  layer_base.fill(0x888888);
-
-  // Create an layer_base shaped mask for the mark making
-  const layer_mask = layer_base.clone();
-
-  // Create graphics objects for the mark making
-  const history_layer = new Graphics();
-  const active_layer = new Graphics();
-
-  // Init store
-  const tool_store = new ToolStore(history_layer, active_layer);
-
-  // Register Event Handlers
-  app.stage.on('pointerdown', toolStart, tool_store);
-  app.stage.on('pointerup', toolStop, tool_store);
-  app.stage.on('pointermove', toolMove, tool_store);
+  // Todo: make sure that only one event handler is active at a time
+  const surface = new Surface(app);
+  const color_picker = new ColorPicker(app, new Point(50, app.screen.height - 120));
 
   // Compose scene graph
-  app.stage.addChild(layer_base, history_layer, active_layer);
-  history_layer.mask = layer_mask;
-  active_layer.mask = layer_mask;
+  app.stage.addChild(surface.base, color_picker.base);
 
 })();
