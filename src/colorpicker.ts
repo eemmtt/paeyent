@@ -21,7 +21,6 @@ class Slider{
         this.line.rect(0,height/2,width,1);
         this.line.fill(0x222222);
         
-
         this.slide = new Graphics();
         this.slide.rect(0,0,width,height);
         this.slide.fill(slider_color);
@@ -39,7 +38,7 @@ class Slider{
         const slider_pos = this.base.toLocal(event.global).x / this.base.width;
         this.slide.scale = new Point(slider_pos, 1);
         this.value = slider_pos;
-        this.parent.updateColor();
+        this.parent.onSliderUpdate();
     }
 
 }
@@ -110,7 +109,7 @@ export class ColorPicker{
 
     }
 
-    public updateColor(){
+    public onSliderUpdate(){
         this.store.setColor({
             r: this.slider_r.value,
             g: this.slider_g.value,
