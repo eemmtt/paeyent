@@ -1,5 +1,6 @@
 import { Application, Container, Graphics, Point, FederatedPointerEvent } from "pixi.js";
 import { Tool, draw_tool } from "./tools";
+import { Store } from "./store";
 
 
 export class Surface{
@@ -11,20 +12,22 @@ export class Surface{
     is_drawing: boolean;
     draw_pts: Array<Point>;
     curr_tool: Tool;
+    store: Store;
 
-    constructor(app: Application){
+    constructor(app: Application, inset: number, store: Store){
         this.is_drawing = false;
         this.draw_pts = [];
         this.curr_tool = draw_tool;
+        this.store = store;
 
         this.base = new Container();
         this.background = new Graphics();
-        const inset = 50;
-        const a_height = app.screen.height - (2 * inset);
+        //inset = 50;
+        const a_height = app.screen.height - (3 * inset);
         const a_width = app.screen.width - (2 * inset);
 
         this.background.rect(inset, inset, a_width, a_height - 2 * inset);
-        this.background.fill(0x888888);
+        this.background.fill(0x8F8F8F);
 
         this.mask = this.background.clone();
         this.history = new Graphics();
@@ -48,7 +51,7 @@ export class Surface{
     
     private toolStop(this: Surface) {
         if (this.is_drawing){
-          this.curr_tool(false, this);
+          this.curr_tool(false, this, this.store);
           this.active.clear();
 
           this.draw_pts = [];
@@ -61,7 +64,7 @@ export class Surface{
     private toolMove(this: Surface, event: FederatedPointerEvent) {
         if (this.is_drawing) {
           this.draw_pts.push(new Point(event.globalX, event.globalY));
-          this.curr_tool(true, this);
+          this.curr_tool(true, this, this.store);
         }
     };
 }
