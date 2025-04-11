@@ -48,6 +48,7 @@ export class DrawDots implements Tool {
       this.is_drawing = true;
       srf.base.on('pointermove', (event) => this.onPointerMove(event, srf));
       srf.base.on('pointerup', (event) => this.onPointerUp(event, srf));
+      srf.base.on('pointerupoutside', (event) => this.onPointerUp(event, srf));
     }
   }
   
@@ -61,6 +62,7 @@ export class DrawDots implements Tool {
       this.is_drawing = false;
       srf.base.off('pointermove', (event) => this.onPointerMove(event, srf));
       srf.base.off('pointerup', (event) => this.onPointerUp(event, srf));
+      srf.base.off('pointerupoutside', (event) => this.onPointerUp(event, srf));
     }
   }
 
