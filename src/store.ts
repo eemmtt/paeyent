@@ -39,6 +39,10 @@ export class Store{
         return this.rgbaToHex(color);
     }
 
+    public getColorHex(){
+        return this.rgbaToHex({r: this.red, g: this.green, b: this.blue })
+    }
+
     public setColor(color: {r:number, g:number, b:number}){
         this.red = color.r;
         this.green = color.g;
