@@ -1,5 +1,5 @@
-import { Application, Container, Graphics, Point, FederatedPointerEvent } from "pixi.js";
-import { Tool, draw_tool } from "./tools";
+import { Application, Container, Graphics, Point, Rectangle } from "pixi.js";
+import { LassoFill, Tool } from "./tools";
 import { Store } from "./store";
 
 
@@ -9,62 +9,42 @@ export class Surface{
     mask: Graphics;
     history: Graphics;
     active: Graphics;
+    marker: Graphics;
     is_drawing: boolean;
-    draw_pts: Array<Point>;
+    pts: Array<Point>;
     curr_tool: Tool;
     store: Store;
 
     constructor(app: Application, inset: number, store: Store){
         this.is_drawing = false;
-        this.draw_pts = [];
-        this.curr_tool = draw_tool;
+        this.pts = [];
+        this.curr_tool = new LassoFill();
         this.store = store;
 
         this.base = new Container();
-        this.background = new Graphics();
-        //inset = 50;
+        this.base.eventMode = 'static';
+        this.base.hitArea = new Rectangle(0,0,app.screen.width, app.screen.height - 3 * inset);
+        
         const a_height = app.screen.height - (3 * inset);
         const a_width = app.screen.width - (2 * inset);
-
+        this.background = new Graphics();
         this.background.rect(inset, inset, a_width, a_height - 2 * inset);
         this.background.fill(0x8F8F8F);
 
         this.mask = this.background.clone();
+
         this.history = new Graphics();
         this.active = new Graphics();
 
-        this.base.addChild(this.background, this.history, this.active);
+        this.marker = new Graphics();
+        this.marker.blendMode = 'difference';
+
+        this.base.addChild(this.background, this.history, this.active, this.marker);
         this.history.mask = this.mask;
         this.active.mask = this.mask;
 
-        app.stage.on('pointerdown', this.toolStart, this);
+        this.base.on('pointerdown', (event) => this.curr_tool.onPointerDown(event, this));
 
     }
 
-    private toolStart(this: Surface) {
-        if (!this.is_drawing){
-          this.is_drawing = true;
-          this.base.parent.on('pointermove', this.toolMove, this);
-          this.base.parent.on('pointerup', this.toolStop, this);
-        }
-    };
-    
-    private toolStop(this: Surface) {
-        if (this.is_drawing){
-          this.curr_tool(false, this, this.store);
-          this.active.clear();
-
-          this.draw_pts = [];
-          this.is_drawing = false;
-          this.base.parent.off('pointermove', this.toolMove, this);
-          this.base.parent.off('pointerup', this.toolStop, this);
-        }
-    };
-    
-    private toolMove(this: Surface, event: FederatedPointerEvent) {
-        if (this.is_drawing) {
-          this.draw_pts.push(new Point(event.globalX, event.globalY));
-          this.curr_tool(true, this, this.store);
-        }
-    };
 }

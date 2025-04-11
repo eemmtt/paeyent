@@ -12,8 +12,8 @@ import { Store } from "./store";
   await app.init({ background: "#7F7F7F", resizeTo: window });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
 
-  app.stage.eventMode = 'static';
-  app.stage.hitArea = app.screen;
+  //app.stage.eventMode = 'static';
+  //app.stage.hitArea = app.screen;
   const store = new Store({r:0.5, g:0.5, b:0.5});
   
   // Todo: make sure that only one event handler is active at a time
