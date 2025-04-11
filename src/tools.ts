@@ -15,10 +15,12 @@ export interface Tool{
 export class DrawDots implements Tool {
   is_drawing: boolean;
   pts: Point[];
+  dot_radius: number;
 
   constructor(){
     this.is_drawing = false;
     this.pts = [];
+    this.dot_radius = 10;
   }
 
   active_draw(srf: Surface): void {
@@ -26,7 +28,7 @@ export class DrawDots implements Tool {
       return
     }
     const last_pt = this.pts[this.pts.length - 1];
-    srf.active.circle(last_pt.x, last_pt.y, 5);
+    srf.active.circle(last_pt.x, last_pt.y, this.dot_radius);
     srf.active.fill(srf.store.getColorRGBA());
   }
 
@@ -36,7 +38,7 @@ export class DrawDots implements Tool {
     } 
 
     this.pts.forEach(pt => {
-      srf.history.circle(pt.x, pt.y, 5);
+      srf.history.circle(pt.x, pt.y, this.dot_radius);
       srf.history.fill(srf.store.getColorRGBA());
     });
   }
@@ -44,8 +46,8 @@ export class DrawDots implements Tool {
   onPointerDown(_event: FederatedPointerEvent, srf: Surface): void {
     if (!this.is_drawing){
       this.is_drawing = true;
-      srf.base.parent.on('pointermove', (event) => this.onPointerMove(event, srf));
-      srf.base.parent.on('pointerup', (event) => this.onPointerUp(event, srf));
+      srf.base.on('pointermove', (event) => this.onPointerMove(event, srf));
+      srf.base.on('pointerup', (event) => this.onPointerUp(event, srf));
     }
   }
   
@@ -57,8 +59,8 @@ export class DrawDots implements Tool {
 
       this.pts = [];
       this.is_drawing = false;
-      srf.base.parent.off('pointermove', (event) => this.onPointerMove(event, srf));
-      srf.base.parent.off('pointerup', (event) => this.onPointerUp(event, srf));
+      srf.base.off('pointermove', (event) => this.onPointerMove(event, srf));
+      srf.base.off('pointerup', (event) => this.onPointerUp(event, srf));
     }
   }
 

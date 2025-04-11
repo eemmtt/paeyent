@@ -1,5 +1,4 @@
 import { Application, Color, Container, FederatedPointerEvent, Graphics, Point, Rectangle } from "pixi.js";
-import { Surface } from "./surface";
 import { Store } from "./store";
 
 class Slider{
@@ -47,19 +46,19 @@ export class ColorPicker{
     base: Container;
     store: Store;
     //handle: Graphics;
-    palette: Graphics;
+    background: Graphics;
     slider_r: Slider;
     slider_g: Slider;
     slider_b: Slider;
-    surface: Surface;
     is_moving: boolean;
 
-    constructor(app: Application, surface: Surface, init_pos: Point, store: Store){
+    constructor(_app: Application, store: Store, rect: Rectangle){
 
         this.is_moving = false;
-        this.surface = surface;
         this.store = store;
+
         this.base = new Container();
+        this.base.eventMode = 'static'
         
         /*
         this.handle = new Graphics();
@@ -69,43 +68,51 @@ export class ColorPicker{
         this.handle.on('pointerdown', this.dragStart, this);
         */
         
-        this.palette = new Graphics();
-        this.palette.eventMode = 'static'
-        const v_width = app.screen.width;
-        const palette_width = (v_width - 2*init_pos.x) / 2;
-        const palette_height = 70;
-        this.palette.rect(0, 0, palette_width, palette_height);
-        this.palette.fill(0x8F8F8F);
+        this.background = new Graphics();
+        const inset_x =  Math.min(rect.width, rect.height)  * (1 - store.inset) * 3;
+        const inset_y =  Math.min(rect.width, rect.height)  * (1 - store.inset) * 3;
+        const bg_width = rect.width - 2 * inset_x;
+        const bg_height = rect.height - 2 * inset_y;
+
+        this.background.rect(
+            0, 
+            0, 
+            bg_width,
+            bg_height
+        );
+        this.background.fill(0x8F8F8F);
 
         this.slider_r = new Slider(
-            palette_width * 0.1, 
-            palette_height / 4, 
-            palette_width * 0.8, 
+            inset_x, 
+            bg_height * 0.25, 
+            bg_width - 2 * inset_x, 
             6, 
             new Color( {r: 248, g: 32, b:32, a:1} ),
             this
         );
+        
         this.slider_g = new Slider(
-            palette_width * 0.1, 
-            2 * palette_height / 4, 
-            palette_width * 0.8, 
+            inset_x, 
+            bg_height * 0.5, 
+            bg_width - 2 * inset_x, 
             6, 
             new Color( {r: 32, g: 248, b:32, a:1} ),
             this
         );
+
         this.slider_b = new Slider(
-            palette_width * 0.1, 
-            3 * palette_height / 4, 
-            palette_width * 0.8, 
+            inset_x, 
+            bg_height * 0.75, 
+            bg_width - 2 * inset_x, 
             6, 
             new Color( {r: 32, g: 32, b:248, a:1}),
             this
         );
         
         //this.base.addChild(this.handle, this.palette);
-        this.base.addChild(this.palette, this.slider_r.base, this.slider_g.base, this.slider_b.base);
-        this.base.x = init_pos.x;
-        this.base.y = init_pos.y;
+        this.base.addChild(this.background, this.slider_r.base, this.slider_g.base, this.slider_b.base);
+        this.base.x = rect.x + inset_x;
+        this.base.y = rect.y + inset_y;
 
     }
 

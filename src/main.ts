@@ -1,6 +1,6 @@
-import { Application, Point } from "pixi.js";
+import { Application, Rectangle } from "pixi.js";
 import { ColorPicker } from "./colorpicker";
-import { Surface } from "./surface";
+import { Canvas, Dabbler } from "./surface";
 import { Store } from "./store";
 
 (async () => {
@@ -12,16 +12,33 @@ import { Store } from "./store";
   await app.init({ background: "#7F7F7F", resizeTo: window });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
 
-  //app.stage.eventMode = 'static';
-  //app.stage.hitArea = app.screen;
-  const store = new Store({r:0.5, g:0.5, b:0.5});
-  
-  // Todo: make sure that only one event handler is active at a time
-  const surf_inset = 35; //px
-  const surface = new Surface(app, surf_inset, store);
-  const color_picker = new ColorPicker(app, surface, new Point(surf_inset, app.screen.height - 3 * surf_inset), store);
+  // Setup Scene Components
+  const store = new Store(
+    {r:0.5, g:0.5, b:0.5}, 
+    .95
+  );
 
+  const canvas = new Canvas(
+    app, 
+    store,
+    new Rectangle(0,0,app.screen.width,app.screen.height * 0.75)
+  );
+
+  const dabbler = new Dabbler(
+    app, 
+    store,
+    new Rectangle(app.screen.width * 0.5, app.screen.height * 0.75, app.screen.width * 0.5, app.screen.height * 0.25)
+  );
+
+  const color_picker = new ColorPicker(
+    app, 
+    store,
+    new Rectangle(0, app.screen.height * 0.75, app.screen.width * 0.5, app.screen.height * 0.25)
+  );
+
+  store.registerColorListener(dabbler);
+  
   // Compose scene graph
-  app.stage.addChild(surface.base, color_picker.base);
+  app.stage.addChild(canvas.base, color_picker.base, dabbler.base);
 
 })();

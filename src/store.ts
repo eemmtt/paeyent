@@ -7,15 +7,24 @@ interface RGBA {
     a?: number; // 0-1 (optional, defaults to 1)
 }
 
+interface ColorListener {
+    onColorUpdate: (store: Store) => void;
+}
+
 export class Store{
     red: number;
     green: number;
     blue: number;
+    colorListeners: ColorListener[];
 
-    constructor(color: {r:number, g:number, b:number}){
+    inset: number; // 0-1, percentage to shrink panel in layout
+
+    constructor(color: {r:number, g:number, b:number}, inset: number){
         this.red = color.r;
         this.green = color.g;
         this.blue = color.b;
+        this.colorListeners = [];
+        this.inset = inset;
     }
 
     public getColor(){
@@ -43,11 +52,18 @@ export class Store{
         return this.rgbaToHex({r: this.red, g: this.green, b: this.blue })
     }
 
+    public registerColorListener(listener: ColorListener){
+        this.colorListeners.push(listener);
+    }
+
     public setColor(color: {r:number, g:number, b:number}){
         this.red = color.r;
         this.green = color.g;
         this.blue = color.b;
         //console.log("Set color: ", this.red, this.green, this.blue, 1);
+        this.colorListeners.forEach(listener => {
+            listener.onColorUpdate(this);
+        });
     }
 
     private rgbaToHex({ r, g, b }: RGBA): number {
