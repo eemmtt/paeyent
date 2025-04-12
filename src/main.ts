@@ -21,19 +21,19 @@ import { Store } from "./store";
   const canvas = new Canvas(
     app, 
     store,
-    new Rectangle(0,0,app.screen.width,app.screen.height * 0.75)
+    new Rectangle(0, 0, app.screen.width, app.screen.height * 0.75)
   );
 
   const dabbler = new Dabbler(
     app, 
     store,
-    new Rectangle(app.screen.width * 0.5, app.screen.height * 0.75, app.screen.width * 0.5, app.screen.height * 0.25)
+    new Rectangle(0, app.screen.height * 0.75, app.screen.width, app.screen.height * 0.10)
   );
 
   const color_picker = new ColorPicker(
     app, 
     store,
-    new Rectangle(0, app.screen.height * 0.75, app.screen.width * 0.5, app.screen.height * 0.25)
+    new Rectangle(0, app.screen.height * 0.85, app.screen.width, app.screen.height * 0.15)
   );
 
   store.registerColorListener(dabbler);

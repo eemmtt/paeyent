@@ -69,41 +69,41 @@ export class ColorPicker{
         */
         
         this.background = new Graphics();
-        const inset_x =  Math.min(rect.width, rect.height)  * (1 - store.inset) * 3;
-        const inset_y =  Math.min(rect.width, rect.height)  * (1 - store.inset) * 3;
+        const inset_x =  Math.max(rect.width, rect.height)  * (1 - store.inset);
+        const inset_y =  Math.max(rect.width, rect.height)  * (1 - store.inset);
         const bg_width = rect.width - 2 * inset_x;
-        const bg_height = rect.height - 2 * inset_y;
+        const bg_height = rect.height - 0.5 * inset_y;
 
         this.background.rect(
-            0, 
-            0, 
+            rect.x + inset_x, 
+            rect.y, 
             bg_width,
             bg_height
         );
         this.background.fill(0x8F8F8F);
 
         this.slider_r = new Slider(
-            inset_x, 
-            bg_height * 0.25, 
-            bg_width - 2 * inset_x, 
+            rect.x + inset_x + bg_width * 0.025, 
+            rect.y + bg_height * 0.25, 
+            bg_width * 0.95, 
             6, 
             new Color( {r: 248, g: 32, b:32, a:1} ),
             this
         );
         
         this.slider_g = new Slider(
-            inset_x, 
-            bg_height * 0.5, 
-            bg_width - 2 * inset_x, 
+            rect.x + inset_x + bg_width * 0.025, 
+            rect.y + bg_height * 0.5, 
+            bg_width * 0.95, 
             6, 
             new Color( {r: 32, g: 248, b:32, a:1} ),
             this
         );
 
         this.slider_b = new Slider(
-            inset_x, 
-            bg_height * 0.75, 
-            bg_width - 2 * inset_x, 
+            rect.x + inset_x + bg_width * 0.025, 
+            rect.y + bg_height * 0.75, 
+            bg_width * 0.95, 
             6, 
             new Color( {r: 32, g: 32, b:248, a:1}),
             this
@@ -111,8 +111,6 @@ export class ColorPicker{
         
         //this.base.addChild(this.handle, this.palette);
         this.base.addChild(this.background, this.slider_r.base, this.slider_g.base, this.slider_b.base);
-        this.base.x = rect.x + inset_x;
-        this.base.y = rect.y + inset_y;
 
     }
 

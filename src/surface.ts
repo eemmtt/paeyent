@@ -46,8 +46,8 @@ export class Canvas extends Surface{
     super(store);
     this.base.hitArea = rect;
 
-    const inset_x =  Math.min(rect.width, rect.height) * (1 - store.inset);
-    const inset_y =  Math.min(rect.width, rect.height) * (1 - store.inset);
+    const inset_x =  Math.max(rect.width, rect.height) * (1 - store.inset);
+    const inset_y =  Math.max(rect.width, rect.height) * (1 - store.inset);
 
     this.background.rect(
       rect.x + inset_x, 
@@ -67,20 +67,19 @@ export class Dabbler extends Surface{
     super(store);
     this.base.hitArea = rect;
 
-    const inset_x =  Math.min(rect.width, rect.height)  * (1 - store.inset) * 3;
-    const inset_y =  Math.min(rect.width, rect.height)  * (1 - store.inset) * 3;
+    const inset_x =  Math.max(rect.width, rect.height)  * (1 - store.inset);
+    const inset_y =  Math.max(rect.width, rect.height)  * (1 - store.inset);
 
     this.background.rect(
       rect.x + inset_x, 
-      rect.y + inset_y, 
-      rect.width - 2 * inset_x,
-      rect.height - 2 * inset_y
-    );
+      rect.y, 
+      rect.width - 2 * inset_x, 
+      rect.height - 0.5 * inset_y);
     this.background.fill(0x8F8F8F);
 
     this.previewer.rect(
       rect.x + inset_x, 
-      rect.y + inset_y, 
+      rect.y + rect.height - 0.5 * inset_y, 
       rect.width - 2 * inset_x,
       rect.height * 0.2
     )
