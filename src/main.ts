@@ -27,7 +27,7 @@ import { Store } from "./store";
   const dabbler = new Dabbler(
     app, 
     store,
-    new Rectangle(0, app.screen.height * 0.75, app.screen.width, app.screen.height * 0.10)
+    new Rectangle(0, app.screen.height * 0.75, app.screen.width * 0.96, app.screen.height * 0.10)
   );
 
   const color_picker = new ColorPicker(

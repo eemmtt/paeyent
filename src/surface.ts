@@ -65,17 +65,26 @@ export class Dabbler extends Surface{
 
   constructor(_app: Application, store: Store, rect: Rectangle){
     super(store);
-    this.base.hitArea = rect;
+    
+    //Hacky inset to test layout with button, note app.screen.width
+    const inset_x =  Math.max(_app.screen.width, rect.height)  * (1 - store.inset);
+    const inset_y =  Math.max(_app.screen.width, rect.height)  * (1 - store.inset);
 
-    const inset_x =  Math.max(rect.width, rect.height)  * (1 - store.inset);
-    const inset_y =  Math.max(rect.width, rect.height)  * (1 - store.inset);
-
-    this.background.rect(
+    const bg_rect = new Rectangle(
       rect.x + inset_x, 
       rect.y, 
       rect.width - 2 * inset_x, 
-      rect.height - 0.5 * inset_y);
+      rect.height - 0.5 * inset_y
+    )
+    this.background.rect(
+      bg_rect.x,
+      bg_rect.y,
+      bg_rect.width,
+      bg_rect.height
+    );
     this.background.fill(0x8F8F8F);
+
+    this.base.hitArea = bg_rect;
 
     this.previewer.rect(
       rect.x + inset_x, 
