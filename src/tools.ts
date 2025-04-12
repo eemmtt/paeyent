@@ -79,9 +79,11 @@ export class LassoFill implements Tool{
   is_drawing: boolean;
   pts: Point[];
   marker_size: number;
+  is_dragging: boolean;
 
   constructor(){
     this.is_drawing = false;
+    this.is_dragging = false;
     this.pts = [];
     this.marker_size = 20;
   }
@@ -96,11 +98,8 @@ export class LassoFill implements Tool{
     if (this.pts.length == 0){ 
       return
     }
-    const last_pt = this.pts[this.pts.length - 1];
 
-    // Init point marker
-    srf.marker.circle(this.pts[0].x, this.pts[0].y, this.marker_size);
-    srf.marker.stroke({ color: 0xFFFFFF, pixelLine: true, width: 1});
+    const last_pt = this.pts[this.pts.length - 1];
 
     // If not enough points to draw a preview triangle, draw a line instead
     if (this.pts.length == 1){
@@ -127,9 +126,7 @@ export class LassoFill implements Tool{
   }
 
   inactive_draw(srf: Surface): void {
-    if (this.pts.length == 0){ 
-      return
-    }
+    
     if (this.pts.length == 3){
       srf.history
         .moveTo(this.pts[0].x, this.pts[0].y)
@@ -146,12 +143,19 @@ export class LassoFill implements Tool{
   onPointerDown(event: FederatedPointerEvent, srf: Surface): void {
     if (!this.is_drawing){
       this.is_drawing = true;
+      //this.is_dragging = true;
       this.pts.push(new Point(event.globalX, event.globalY));
+
+      // Init point marker
+      srf.marker.circle(this.pts[0].x, this.pts[0].y, this.marker_size);
+      srf.marker.stroke({ color: 0xFFFFFF, pixelLine: true, width: 1});
+
       srf.base.on('pointermove', (event) => this.onPointerMove(event, srf));
-      //srf.base.on('pointerup', (event) => this.onPointerUp(event, srf));
+      srf.base.on('pointerup', (event) => this.onPointerUp(event, srf));
       return
     }
     if (this.is_drawing){
+      //this.is_dragging = true;
       const curr_pt = new Point(event.globalX, event.globalY);
       if (this.pts.length < 3){
         this.pts.push(curr_pt);
@@ -165,7 +169,7 @@ export class LassoFill implements Tool{
         this.pts = [];
         this.is_drawing = false;
         srf.base.off('pointermove', (event) => this.onPointerMove(event, srf));
-        //srf.base.off('pointerup', (event) => this.onPointerUp(event, srf));
+        srf.base.off('pointerup', (event) => this.onPointerUp(event, srf));
       }
 
       if (this.pts.length == 3){
@@ -179,13 +183,25 @@ export class LassoFill implements Tool{
   }
 
   onPointerUp(_event: FederatedPointerEvent, _srf: Surface): void {
-    return
+    this.is_dragging = false;
   }
 
   onPointerMove(event: FederatedPointerEvent, srf: Surface): void {
-    
     const curr_pt = new Point(event.globalX, event.globalY);
-    srf.active.clear();
-    this.active_draw(srf, curr_pt);
+
+    /*
+    if (this.is_dragging){
+      this.pts.push(curr_pt);
+      this.inactive_draw(srf);
+      srf.active.clear();
+      const last_pt = this.pts[this.pts.length - 1];
+      this.pts = [this.pts[0], last_pt];
+      return
+    }
+    */
+    if (!this.is_dragging){
+      srf.active.clear();
+      this.active_draw(srf, curr_pt);
+    }
   }
 }
