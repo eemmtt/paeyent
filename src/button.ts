@@ -24,7 +24,7 @@ export class Button{
             rect.x - inset * 0.8, 
             rect.y, 
             rect.width - inset * 0.2, 
-            1.2 * rect.height - 0.5 * inset
+            rect.height - 0.25 * inset
         )
 
         this.base.hitArea = new_rect;

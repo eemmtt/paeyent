@@ -103,7 +103,7 @@ export class Dabbler extends Surface{
       rect.x + inset_x, 
       rect.y, 
       rect.width - 2 * inset_x, 
-      rect.height - 0.5 * inset_y
+      rect.height - 0.25 * inset_y
     )
     this.background.rect(
       bg_rect.x,
@@ -116,10 +116,10 @@ export class Dabbler extends Surface{
     this.base.hitArea = bg_rect;
 
     this.previewer.rect(
-      rect.x + inset_x, 
-      rect.y + rect.height - 0.5 * inset_y, 
-      rect.width - 2 * inset_x,
-      rect.height * 0.2
+      bg_rect.x, 
+      bg_rect.y + bg_rect.height * 0.8, 
+      bg_rect.width,
+      bg_rect.height * 0.2
     )
     this.previewer.fill(0xFFFFFF);
     this.previewer.tint = store.getColorHex();
