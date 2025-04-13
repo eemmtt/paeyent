@@ -12,15 +12,42 @@ export interface Tool{
   onPointerMove(event: FederatedPointerEvent, srf: Surface): void
 }
 
+export class NullTool implements Tool {
+  is_drawing: boolean;
+  pts: Point[];
+
+  constructor(){
+    this.is_drawing = false;
+    this.pts = [];
+  }
+  active_draw(_srf: Surface, _curr_pt: Point): void {
+      console.log("NullTool used active_draw");
+  }
+  inactive_draw(_srf: Surface): void {
+    console.log("NullTool used inactive_draw");
+  }
+  onPointerDown(_event: FederatedPointerEvent, _srf: Surface): void {
+    console.log("NullTool used onPointerDown");
+  }
+  onPointerUp(_event: FederatedPointerEvent, _srf: Surface): void {
+    console.log("NullTool used onPointerUp");
+  }
+  onPointerMove(_event: FederatedPointerEvent, _srf: Surface): void {
+    console.log("NullTool used onPointerMove");
+  }
+}
+
 export class DrawDots implements Tool {
   is_drawing: boolean;
   pts: Point[];
   dot_radius: number;
+  events: Array<(event: FederatedPointerEvent) => void>;
 
   constructor(){
     this.is_drawing = false;
     this.pts = [];
     this.dot_radius = 10;
+    this.events = [];
   }
 
   active_draw(srf: Surface): void {
@@ -29,7 +56,7 @@ export class DrawDots implements Tool {
     }
     const last_pt = this.pts[this.pts.length - 1];
     srf.active.circle(last_pt.x, last_pt.y, this.dot_radius);
-    srf.active.fill(srf.store.getColorRGBA());
+    srf.active.fill(srf.store.getColorHex());
   }
 
   inactive_draw(srf: Surface): void {
@@ -39,16 +66,23 @@ export class DrawDots implements Tool {
 
     this.pts.forEach(pt => {
       srf.history.circle(pt.x, pt.y, this.dot_radius);
-      srf.history.fill(srf.store.getColorRGBA());
+      srf.history.fill(srf.store.getColorHex());
     });
   }
 
   onPointerDown(_event: FederatedPointerEvent, srf: Surface): void {
     if (!this.is_drawing){
       this.is_drawing = true;
-      srf.base.on('pointermove', (event) => this.onPointerMove(event, srf));
-      srf.base.on('pointerup', (event) => this.onPointerUp(event, srf));
-      srf.base.on('pointerupoutside', (event) => this.onPointerUp(event, srf));
+
+      //store references to events that persist through tool use
+      if (this.events.length == 0){
+        this.events.push((event: FederatedPointerEvent) => this.onPointerMove(event, srf));
+      }
+
+      //register events
+      srf.base.on('pointermove', this.events[0]);
+      srf.base.once('pointerup', (event) => this.onPointerUp(event, srf));
+      srf.base.once('pointerupoutside', (event) => this.onPointerUp(event, srf));
     }
   }
   
@@ -60,9 +94,7 @@ export class DrawDots implements Tool {
 
       this.pts = [];
       this.is_drawing = false;
-      srf.base.off('pointermove', (event) => this.onPointerMove(event, srf));
-      srf.base.off('pointerup', (event) => this.onPointerUp(event, srf));
-      srf.base.off('pointerupoutside', (event) => this.onPointerUp(event, srf));
+      srf.base.off('pointermove', this.events[0]);
     }
   }
 
@@ -80,12 +112,14 @@ export class LassoFill implements Tool{
   pts: Point[];
   marker_size: number;
   is_dragging: boolean;
+  events: Array<(event: FederatedPointerEvent) => void>;
 
   constructor(){
     this.is_drawing = false;
     this.is_dragging = false;
     this.pts = [];
     this.marker_size = 20;
+    this.events = [];
   }
   
   private ptDist(start_pt: Point, end_pt: Point): number{
@@ -150,8 +184,12 @@ export class LassoFill implements Tool{
       srf.marker.circle(this.pts[0].x, this.pts[0].y, this.marker_size);
       srf.marker.stroke({ color: 0xFFFFFF, pixelLine: true, width: 1});
 
-      srf.base.on('pointermove', (event) => this.onPointerMove(event, srf));
-      srf.base.on('pointerup', (event) => this.onPointerUp(event, srf));
+      if (this.events.length == 0){
+        this.events.push((event: FederatedPointerEvent) => this.onPointerMove(event, srf));
+        this.events.push((event: FederatedPointerEvent) => this.onPointerUp(event, srf));
+      }
+      srf.base.on('pointermove', this.events[0]);
+      srf.base.on('pointerup', this.events[1]);
       return
     }
     if (this.is_drawing){
@@ -168,8 +206,8 @@ export class LassoFill implements Tool{
         srf.marker.clear();
         this.pts = [];
         this.is_drawing = false;
-        srf.base.off('pointermove', (event) => this.onPointerMove(event, srf));
-        srf.base.off('pointerup', (event) => this.onPointerUp(event, srf));
+        srf.base.off('pointermove', this.events[0]);
+        srf.base.off('pointerup', this.events[1]);
       }
 
       if (this.pts.length == 3){

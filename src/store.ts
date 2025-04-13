@@ -19,6 +19,8 @@ export class Store{
 
     inset: number; // 0-1, percentage to shrink panel in layout
 
+    
+
     constructor(color: {r:number, g:number, b:number}, inset: number){
         this.red = color.r;
         this.green = color.g;
