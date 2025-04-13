@@ -2,6 +2,7 @@ import { Application, Rectangle } from "pixi.js";
 import { ColorPicker } from "./colorpicker";
 import { Canvas, Dabbler } from "./surface";
 import { Store } from "./store";
+import { Button } from "./button";
 
 (async () => {
 
@@ -36,9 +37,16 @@ import { Store } from "./store";
     new Rectangle(0, app.screen.height * 0.85, app.screen.width, app.screen.height * 0.15)
   );
 
+  const tool_toggle = new Button(
+    app,
+    store,
+    new Rectangle(app.screen.width * 0.96, app.screen.height * 0.75, app.screen.width * 0.04, app.screen.height * 0.10)
+  );
+
   store.registerColorListener(dabbler);
+  tool_toggle.registerButtonListener(canvas);
   
   // Compose scene graph
-  app.stage.addChild(canvas.base, color_picker.base, dabbler.base);
+  app.stage.addChild(canvas.base, color_picker.base, dabbler.base, tool_toggle.base);
 
 })();
