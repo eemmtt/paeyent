@@ -31,13 +31,13 @@ export class Button{
 
         const bg_lasso = new Graphics()
             .roundRect(new_rect.x, new_rect.y, new_rect.width, new_rect.height, 3)
-            .fill(0x444444)
+            .fill(0x8F8F8F)
             .ellipse(new_rect.x + new_rect.width/2, new_rect.y + new_rect.height/2, new_rect.width/4, new_rect.height/4)
             .stroke({color: 0xDDDDDD, pixelLine: true, width: 1})
             ;
         const bg_dots = new Graphics()
             .ellipse(new_rect.x + new_rect.width/2, new_rect.y + new_rect.height/2, new_rect.width/2, new_rect.height/2)
-            .fill(0x555555)
+            .fill(0x8F8F8F)
             .roundRect(new_rect.x + new_rect.width/4, new_rect.y + new_rect.height/4, new_rect.width/2, new_rect.height/2, 1)
             .stroke({color: 0xDDDDDD, pixelLine: true, width: 1})
             ;
