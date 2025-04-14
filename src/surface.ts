@@ -124,7 +124,10 @@ export class Dabbler extends Surface{
     this.previewer.fill(0xFFFFFF);
     this.previewer.tint = store.getColorHex();
 
-    this.curr_tool = new DrawDots();
+    const drawTool = new DrawDots();
+    drawTool.dot_radius= 10;
+
+    this.curr_tool = drawTool;
     this.base.on('pointerdown', (event) => this.curr_tool.onPointerDown(event, this));
   }
 
