@@ -96,7 +96,7 @@ export class ColorPicker{
             rect.y + bg_height * 0.5, 
             bg_width * 0.95, 
             6, 
-            new Color( {r: 32, g: 248, b:32, a:1} ),
+            new Color( {r: 64, g: 240, b:120, a:1} ),
             this
         );
 

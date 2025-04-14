@@ -10,7 +10,7 @@ import { Button } from "./button";
   //globalThis.__PIXI_APP__ = app;
 
   const app = new Application();
-  await app.init({ background: "#7F7F7F", resizeTo: window });
+  await app.init({ background: "#787878", resizeTo: window });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
 
   // Setup Scene Components
