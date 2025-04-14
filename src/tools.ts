@@ -46,7 +46,7 @@ export class DrawDots implements Tool {
   constructor(){
     this.is_drawing = false;
     this.pts = [];
-    this.dot_radius = 10;
+    this.dot_radius = 5;
     this.events = [];
   }
 
