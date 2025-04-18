@@ -23,6 +23,12 @@ import { Button } from "./button";
     app.renderer.resize(window.innerWidth, window.innerHeight);
   });
 
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+    }, 100);
+  });
+
   // Setup Scene Components
   const store = new Store(
     {r:0.5, g:0.5, b:0.5}, 
