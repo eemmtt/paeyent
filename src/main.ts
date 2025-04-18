@@ -10,8 +10,18 @@ import { Button } from "./button";
   //globalThis.__PIXI_APP__ = app;
 
   const app = new Application();
-  await app.init({ background: "#787878", resizeTo: window });
+  await app.init({ 
+    background: "#787878", 
+    width: window.innerWidth,
+    height: window.innerHeight,
+    resizeTo: window,
+    autoDensity: true 
+  });
   document.getElementById("pixi-container")!.appendChild(app.canvas);  
+
+  window.addEventListener('resize', () => {
+    app.renderer.resize(window.innerWidth, window.innerHeight);
+  });
 
   // Setup Scene Components
   const store = new Store(
